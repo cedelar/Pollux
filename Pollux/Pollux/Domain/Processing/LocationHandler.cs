@@ -1,15 +1,6 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Microsoft.AppCenter.Crashes;
+﻿using Microsoft.AppCenter.Crashes;
 using Pollux.Domain.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -18,13 +9,14 @@ namespace Pollux.Domain.Processing
 {
     public class LocationHandler
     {
-        private static int _minRefreshTime = 10000;
+        private readonly LocationHandlerSettings _settings;
 
         private DateTime _lastRefresh;
         private Coordinates _currentCoordinates;
 
         public LocationHandler()
         {
+            _settings = SettingsHandler.GetLocationHandlerSettings();
             _currentCoordinates = new Coordinates()
             {
                 Latitude = 0,
@@ -35,7 +27,7 @@ namespace Pollux.Domain.Processing
 
         public async Task<Coordinates> GetCurrentCoordinates()
         {
-            if(_currentCoordinates == null || _lastRefresh.AddMilliseconds(_minRefreshTime) < DateTime.UtcNow)
+            if(_currentCoordinates == null || _lastRefresh.AddSeconds(_settings.LocationRefreshTimeSec) < DateTime.UtcNow)
             {
                 await Refresh();
             }

@@ -1,20 +1,15 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using AndroidX.Core.App;
+using Microsoft.AppCenter.Crashes;
 using Plugin.BLE;
-using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Pollux.Domain.Data;
 using Pollux.Domain.Processing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Timers;
 using IAdapter = Plugin.BLE.Abstractions.Contracts.IAdapter;
 
@@ -23,11 +18,11 @@ namespace Pollux.BleMonitor
     [Service(Label = "BluetoothMonitor")]
     public class BleMonitorService : Service
     {
-        private static string _serviceId = "Pollux_BleMonitor";
-        private static int _notifId = 9000;
-        private static string _channelId = "9001";
+        private MonitorServiceSettings _settings;
+        private static readonly int _notifId = 9000;
+        private static readonly string _channelId = "9001";
+        private static readonly Context _context = Application.Context;
 
-        private static Context _context = Application.Context;
         private IBinder _binder;
         private Timer _restartTimer;
 
@@ -35,22 +30,36 @@ namespace Pollux.BleMonitor
         private IAdapter _bleConnection;
         private BleBeaconHandler _beaconHandler;
 
-       
-
         public override void OnCreate()
         {
             base.OnCreate();
+            _settings = SettingsHandler.GetMonitorServiceSettings();
             _bleStateObserver = CrossBluetoothLE.Current;
             _bleConnection = _bleStateObserver.Adapter;
             _bleConnection.ScanMode = ScanMode.LowLatency;
-            _bleConnection.ScanTimeout = 10000;
+            _bleConnection.ScanTimeout = (_settings.DurationOfBleScansSec * 1000);
             _bleConnection.DeviceDiscovered += OnDeviceDiscovered;
 
             _beaconHandler = new BleBeaconHandler();
             _beaconHandler.NotificationupdateRequested += OnNotificationupdateRequested;
 
-            _restartTimer = new Timer(500);
+            _restartTimer = new Timer(_settings.TimeBetweenBleScansSec * 1000);
             _restartTimer.Elapsed += new ElapsedEventHandler(OnUpdateTimerElapsed);
+        }
+        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
+        {
+            try
+            {
+                var notif = BuildNotification(_settings.NotificationContentText);
+                StartForeground(_notifId, notif);
+                _restartTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+
+            return StartCommandResult.Sticky;
         }
 
         private void OnDeviceDiscovered(object sender, DeviceEventArgs args)
@@ -63,7 +72,7 @@ namespace Pollux.BleMonitor
 
         private void OnNotificationupdateRequested(object sender, string content)
         {
-            if (!string.IsNullOrEmpty(content))
+            if (_settings.AllowNotificationUpdates && !string.IsNullOrEmpty(content))
             {
                 UpdateNotificationContent(content);
             }
@@ -75,34 +84,19 @@ namespace Pollux.BleMonitor
             {
                 await _bleConnection.StartScanningForDevicesAsync();
                 _restartTimer.Start();
-            }            
+            }
             catch (Exception ex)
             {
-
+                Crashes.TrackError(ex);
             }
         }
 
-        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
-        {
-            try
-            {
-                var notif = BuildNotification("Activated");
-                StartForeground(_notifId, notif);
-                _restartTimer.Start();
-            }catch(Exception ex)
-            {
-
-            }
-
-            return StartCommandResult.Sticky;
-        }
-
-        public Notification BuildNotification(string Text)
+        private Notification BuildNotification(string Text)
         {
             var pendingIntent = PendingIntent.GetActivity(_context, 0, new Intent(_context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
 
             var notifBuilder = new NotificationCompat.Builder(_context, _channelId)
-                .SetContentTitle("Pollux BLE Monitor")
+                .SetContentTitle(_settings.NotificationTitleText)
                 .SetContentText(Text)
                 .SetSmallIcon(Resource.Drawable.logo)
                 .SetOngoing(true)
@@ -147,6 +141,15 @@ namespace Pollux.BleMonitor
             _binder = null;
             _restartTimer.Dispose();
             base.OnDestroy();
+        }
+
+        public Dictionary<string, HistoricalBleBeacon> GetBeaconData()
+        {
+            if(_beaconHandler != null)
+            {
+                return _beaconHandler.BeaconDictionary;
+            }
+            return new Dictionary<string, HistoricalBleBeacon>();
         }
     }
 }

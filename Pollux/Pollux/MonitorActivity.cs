@@ -1,0 +1,140 @@
+﻿using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Widget;
+using AndroidX.AppCompat.App;
+using Pollux.Adapters;
+using Pollux.BleMonitor;
+using Pollux.Domain.Helper;
+using System;
+using System.Linq;
+using System.Timers;
+using Xamarin.Essentials;
+
+namespace Pollux
+{
+    [Activity(Label = "ServiceMonitor")]
+    public class MonitorActivity : AppCompatActivity
+    {
+        private static string _dateTimeFormat => "HH:mm:ss";
+        private string[][] _listViewData;
+        private BleMonitorServiceConnection _serviceConnection;
+
+        private ListView _beaconListView;
+        private Timer _refreshTimer;
+
+        private Button _toggleSortByRssiButton;
+        private Button _toggleSortByMacButton;
+        private TextView _currentFilterLabel;
+
+        private bool _sortByRssiEnabled;
+        private bool _sortByMacEnabled;
+
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            Platform.Init(this, savedInstanceState);
+            SetContentView(Resource.Layout.activity_monitor);
+
+            if (this.IsServiceRunning(nameof(BleMonitorService)))
+            {
+                var intent = new Intent(this, typeof(BleMonitorService));
+
+                if (_serviceConnection == null)
+                {
+                    _serviceConnection = new BleMonitorServiceConnection();
+                    _serviceConnection.OnConnectionChanged += OnServiceConnectionStatusChanged;
+                }
+
+                BindService(intent, _serviceConnection, Bind.AutoCreate);
+            }
+
+            _beaconListView = FindViewById<ListView>(Resource.Id.listview);
+            _refreshTimer = new Timer(1000);
+            _refreshTimer.Elapsed += OnRefreshTimerElapsed;
+
+            _currentFilterLabel = FindViewById<TextView>(Resource.Id.currentFilter);
+            _toggleSortByMacButton = FindViewById<Button>(Resource.Id.macSortButton);
+            _toggleSortByRssiButton = FindViewById<Button>(Resource.Id.rssiSortButton);
+            _toggleSortByMacButton.Click += ToggleSortByMAC;
+            _toggleSortByRssiButton.Click += ToggleSortByRssi;
+            ToggleSortByRssi(this, null);
+        }
+
+        private void ToggleSortByRssi(object sender, EventArgs eventArgs)
+        {
+            _sortByRssiEnabled = !_sortByRssiEnabled;
+            _sortByMacEnabled = false;
+            SetCurrentFilterLabel();
+        }
+
+        private void ToggleSortByMAC(object sender, EventArgs eventArgs)
+        {
+            _sortByMacEnabled = !_sortByMacEnabled;
+            _sortByRssiEnabled = false;
+            SetCurrentFilterLabel();
+        }
+
+        private void SetCurrentFilterLabel()
+        {
+            var text = "(None)";
+            if (_sortByMacEnabled)
+            {
+                text = "(Mac)";
+            }else if (_sortByRssiEnabled)
+            {
+                text = "(Rssi)";
+            }
+            _currentFilterLabel.Text = text;    
+        }
+
+        private void OnRefreshTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            _listViewData = GetAndConvertBeaconData();
+            RunOnUiThread(() => {
+                var adapter = (DualLineListViewAdapter)_beaconListView.Adapter;
+                adapter.SetItems(_listViewData);
+                adapter.NotifyDataSetChanged();
+            });
+        }
+
+        public void OnServiceConnectionStatusChanged(object sender, bool IsConnected)
+        {
+            _listViewData = GetAndConvertBeaconData();
+            _beaconListView.Adapter = new DualLineListViewAdapter(this, _listViewData);
+            _refreshTimer.Start();
+        }
+
+        private string[][] GetAndConvertBeaconData()
+        {
+            if(_serviceConnection == null)
+            {
+                return new string[0][];
+            }
+            var data = _serviceConnection.GetBeaconData().Values.ToList();
+            if (_sortByMacEnabled)
+            {
+                data = data.OrderBy(x => x.MacAdress).ToList();
+            }
+            if (_sortByRssiEnabled)
+            {
+                data = data.OrderByDescending(x => x.LastRssi).ToList();
+            }
+            return data.Select(x => new string[] { 
+                x.MacAdress + " (" + x.LastRssi + "dB)  Seen: " + DateTimeConverter(x.LastSeenTime),
+                "Movement: " + DateTimeConverter(x.TimeOfEvent(Domain.Data.EventTypes.MovementSend)) + ", Tlm: " + DateTimeConverter(x.TimeOfEvent(Domain.Data.EventTypes.TlmSend))
+            }).ToArray();        
+        }
+
+        private string DateTimeConverter(DateTime dateTime)
+        {
+            if(dateTime == DateTime.MinValue)
+            {
+                return "-";
+            }
+            return dateTime.ToLocalTime().ToString(_dateTimeFormat);
+        }
+    }
+
+   
+}

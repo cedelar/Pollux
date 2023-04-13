@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Pollux.Domain.Data;
+using Pollux.Domain.Processing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,18 @@ namespace Pollux.Domain.Connection
 {
     public class PolarisConnectionHandler
     {
-        private const string _apiAdress = "https://aucxis-polaris-test-web.azurewebsites.net/";
-        private const string _loginEndpoint = "api/Authentication/Login";
-        private const string _movementEndpoint = "apiinternal/ActionConfirmation/Movement";
-        private const string _tlmEndpoint = "apiinternal/BleTag/PostBleTLM";
-
-        private static readonly HttpClient _polarisclient = new HttpClient();
-        private static readonly PolarisAuthentication _authentication = new PolarisAuthentication() { UserName = "Pollux", Password = "Pollux01" };
+        private readonly PolarisConnectionSettings _settings;
+        private readonly HttpClient _polarisclient;
+        private readonly PolarisAuthentication _authentication;
 
         private PolarisAuthenticationResult _authResult;
 
         public PolarisConnectionHandler()
         {
-            _polarisclient.BaseAddress = new Uri(_apiAdress);
+            _settings = SettingsHandler.GetPolarisConnectionSettings();
+            _authentication = new PolarisAuthentication() { UserName = _settings.PolarisUsername, Password = _settings.PolarisPassword };
+            _polarisclient = new HttpClient();
+            _polarisclient.BaseAddress = new Uri(_settings.ApiAdress);
             InjectPolarisAuthentication();
         }
 
@@ -31,7 +31,7 @@ namespace Pollux.Domain.Connection
         {
             if (mr != null)
             {
-                var response = await SendJsonToServer(JsonConvert.SerializeObject(mr), _movementEndpoint);
+                var response = await SendJsonToServer(JsonConvert.SerializeObject(mr), _settings.MovementEndpoint);
                 if (response != null)
                 {
                     return response.IsSuccessStatusCode;
@@ -45,7 +45,7 @@ namespace Pollux.Domain.Connection
             if (messages != null && messages.Any())
             {
                 var j = JsonConvert.SerializeObject(messages);
-                var response = await SendJsonToServer(JsonConvert.SerializeObject(messages), _tlmEndpoint);
+                var response = await SendJsonToServer(JsonConvert.SerializeObject(messages), _settings.TlmEndpoint);
                 if (response != null)
                 {
                     return response.IsSuccessStatusCode;
@@ -75,7 +75,7 @@ namespace Pollux.Domain.Connection
 
         private async void InjectPolarisAuthentication()
         {
-            HttpResponseMessage response = await SendJsonToServer(JsonConvert.SerializeObject(_authentication), _loginEndpoint);
+            HttpResponseMessage response = await SendJsonToServer(JsonConvert.SerializeObject(_authentication), _settings.LoginEndpoint);
             if (response != null && response.IsSuccessStatusCode)
             {
                 using (var content = response.Content)

@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Pollux.Domain.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +14,11 @@ namespace Pollux.BleMonitor
 {
     public class BleMonitorServiceConnection : Java.Lang.Object, IServiceConnection
     {
-        private static MainActivity _mainActivity;
-
         public bool IsConnected { get; set; }
-        public BleMonitorServiceBinder Binder { get; set; }
 
-        public BleMonitorServiceConnection(MainActivity mainActivity)
-        {
-            _mainActivity = mainActivity;
-        }
+        public event EventHandler<bool> OnConnectionChanged;
+
+        public BleMonitorServiceBinder Binder { get; set; }
 
         public void OnServiceConnected(ComponentName name, IBinder serviceBinder)
         {
@@ -31,12 +28,23 @@ namespace Pollux.BleMonitor
                 throw new InvalidCastException("The serviceBinder needs to be of type " + typeof(BleMonitorServiceBinder));
             }
             IsConnected = true;
+            OnConnectionChanged?.Invoke(this, true);
         }
 
         public void OnServiceDisconnected(ComponentName name)
         {
             IsConnected = false;
             Binder = null;
+            OnConnectionChanged?.Invoke(this, false);
+        }
+
+        public Dictionary<string, HistoricalBleBeacon> GetBeaconData()
+        {
+            if (Binder != null)
+            {
+                return Binder.GetBeaconData();
+            }
+            return new Dictionary<string, HistoricalBleBeacon>();
         }
     }
 }
