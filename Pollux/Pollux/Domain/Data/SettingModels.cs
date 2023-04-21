@@ -34,4 +34,11 @@ namespace Pollux.Domain.Data
     {
         public int LocationRefreshTimeSec { get; set; } 
     }
+
+    public class TlmHelperSettings
+    {
+        public int BatteryEmptyMv { get; set; }
+        public int BatteryFullMv { get; set; }
+
+    }
 }

@@ -15,7 +15,7 @@ namespace Pollux.Domain.Processing
             }
             return new PolarisConnectionSettings()
             {
-                ApiAdress = "https://aucxis-polaris-test-web.azurewebsites.net/",
+                ApiAdress = "https://polaris-ble-test.azurewebsites.net/",
                 LoginEndpoint = "api/Authentication/Login",
                 MovementEndpoint = "apiinternal/ActionConfirmation/Movement",
                 TlmEndpoint = "apiinternal/BleTag/PostBleTLM",
@@ -68,6 +68,19 @@ namespace Pollux.Domain.Processing
             };
         }
 
+        public static TlmHelperSettings GetTlmHelperSettings()
+        {
+            if (Preferences.ContainsKey(SettingObjects.TlmHelperSettings))
+            {
+                return JsonConvert.DeserializeObject<TlmHelperSettings>(Preferences.Get(SettingObjects.TlmHelperSettings, null));
+            }
+            return new TlmHelperSettings()
+            {
+                BatteryEmptyMv = 1000,
+                BatteryFullMv = 3000
+            };
+        }
+
         public static void Save(this PolarisConnectionSettings settings)
         {
             Preferences.Set(SettingObjects.PolarisConnectionSettings, JsonConvert.SerializeObject(settings));
@@ -80,7 +93,6 @@ namespace Pollux.Domain.Processing
         {
             Preferences.Set(SettingObjects.MonitorServiceSettings, JsonConvert.SerializeObject(settings));
         }
-
         public static void Save(this LocationHandlerSettings settings)
         {
             Preferences.Set(SettingObjects.LocationHandlerSettings, JsonConvert.SerializeObject(settings));
@@ -93,5 +105,6 @@ namespace Pollux.Domain.Processing
         public static readonly string BeaconHandlerSettings = "BeaconHandlerSettings";
         public static readonly string MonitorServiceSettings = "MonitorServiceSettings";
         public static readonly string LocationHandlerSettings = "LocationHandlerSettings";
+        public static readonly string TlmHelperSettings = "TlmHelperSettings";
     }
 }

@@ -115,6 +115,7 @@ namespace Pollux.Domain.Processing
 
         private async void SubmitMovement(BleBeacon bleBeacon)
         {
+            BeaconDictionary[bleBeacon.MacAdress].Event(EventTypes.MovementSend);
             var movement = new PolarisMovementResult()
             {
                 DestinationCode = _settings.MovementDestinationCode,
@@ -133,7 +134,7 @@ namespace Pollux.Domain.Processing
             if (success)
             {
                 NotificationupdateRequested?.Invoke(this, "Movement: " + bleBeacon.MacAdress);
-                BeaconDictionary[bleBeacon.MacAdress].Event(EventTypes.MovementSend);
+
             }
         }
 
@@ -142,6 +143,7 @@ namespace Pollux.Domain.Processing
             var tlmFrame = bleBeacon.Messages.FirstOrDefault(f => f.Type == FrameType.Tlm);
             if(tlmFrame != null)
             {
+                BeaconDictionary[bleBeacon.MacAdress].Event(EventTypes.TlmSend);
                 var tlmMessage = new PolarisTLMMessage()
                 {
                     Id = bleBeacon.MacAdress,
@@ -155,7 +157,6 @@ namespace Pollux.Domain.Processing
                 if (success)
                 {
                     NotificationupdateRequested?.Invoke(this, "Tlm: " + bleBeacon.MacAdress);
-                    BeaconDictionary[bleBeacon.MacAdress].Event(EventTypes.TlmSend);
                 }
             }
         }

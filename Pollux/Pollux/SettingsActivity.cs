@@ -28,6 +28,7 @@ namespace Pollux
         private BeaconHandlerSettings _beaconHandlerSettings;
         private MonitorServiceSettings _monitorServiceSettings;
         private LocationHandlerSettings _locationHandlerSettings;
+        private TlmHelperSettings _tlmHelperSettings;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -39,6 +40,7 @@ namespace Pollux
             _beaconHandlerSettings = SettingsHandler.GetBeaconHandlerSettings();
             _monitorServiceSettings = SettingsHandler.GetMonitorServiceSettings();
             _locationHandlerSettings = SettingsHandler.GetLocationHandlerSettings();
+            _tlmHelperSettings = SettingsHandler.GetTlmHelperSettings();
 
             SetupGui();
         }
@@ -56,6 +58,8 @@ namespace Pollux
                 { nameof(MonitorServiceSettings.DurationOfBleScansSec), FindViewById<EditText>(Resource.Id.durationOfBleScansSec) },
                 { nameof(MonitorServiceSettings.TimeBetweenBleScansSec), FindViewById<EditText>(Resource.Id.timeBetweenBleScansSec) },
                 { nameof(LocationHandlerSettings.LocationRefreshTimeSec), FindViewById<EditText>(Resource.Id.locationRefreshTimeSec) },
+                { nameof(TlmHelperSettings.BatteryEmptyMv), FindViewById<EditText>(Resource.Id.batteryEmptyMv) },
+                { nameof(TlmHelperSettings.BatteryFullMv), FindViewById<EditText>(Resource.Id.batteryFullMv) },
 
             };
             _checkBoxes = new Dictionary<string, CheckBox>()
@@ -74,6 +78,8 @@ namespace Pollux
             _editTexts[nameof(MonitorServiceSettings.DurationOfBleScansSec)].Text = _monitorServiceSettings.DurationOfBleScansSec.ToString();
             _editTexts[nameof(MonitorServiceSettings.TimeBetweenBleScansSec)].Text = _monitorServiceSettings.TimeBetweenBleScansSec.ToString();
             _editTexts[nameof(LocationHandlerSettings.LocationRefreshTimeSec)].Text = _locationHandlerSettings.LocationRefreshTimeSec.ToString();
+            _editTexts[nameof(TlmHelperSettings.BatteryEmptyMv)].Text = _tlmHelperSettings.BatteryEmptyMv.ToString();
+            _editTexts[nameof(TlmHelperSettings.BatteryFullMv)].Text = _tlmHelperSettings.BatteryFullMv.ToString();
 
             _checkBoxes[nameof(BeaconHandlerSettings.CommonWhiteListEnabled)].Checked = _beaconHandlerSettings.CommonWhiteListEnabled;
             _checkBoxes[nameof(MonitorServiceSettings.AllowNotificationUpdates)].Checked = _monitorServiceSettings.AllowNotificationUpdates;
@@ -95,6 +101,8 @@ namespace Pollux
                 _monitorServiceSettings.DurationOfBleScansSec = Convert.ToInt32(_editTexts[nameof(MonitorServiceSettings.DurationOfBleScansSec)].Text);
                 _monitorServiceSettings.TimeBetweenBleScansSec = Convert.ToInt32(_editTexts[nameof(MonitorServiceSettings.TimeBetweenBleScansSec)].Text);
                 _locationHandlerSettings.LocationRefreshTimeSec = Convert.ToInt32(_editTexts[nameof(LocationHandlerSettings.LocationRefreshTimeSec)].Text);
+                _tlmHelperSettings.BatteryEmptyMv = Convert.ToInt32(_editTexts[nameof(TlmHelperSettings.BatteryEmptyMv)].Text);
+                _tlmHelperSettings.BatteryFullMv = Convert.ToInt32(_editTexts[nameof(TlmHelperSettings.BatteryFullMv)].Text);
 
                 _beaconHandlerSettings.CommonWhiteListEnabled = _checkBoxes[nameof(BeaconHandlerSettings.CommonWhiteListEnabled)].Checked;
                 _monitorServiceSettings.AllowNotificationUpdates = _checkBoxes[nameof(MonitorServiceSettings.AllowNotificationUpdates)].Checked;

@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Pollux.Domain.Data;
+using Pollux.Domain.Processing;
+using System;
 
 namespace Pollux.Domain.Helper
 {
     public static class TlmHelper
     {
-        private const int _batteryFullInMv = 3000;
-        private const int _batteryEmptyInMv = 1000;
+        private static readonly TlmHelperSettings _settings = SettingsHandler.GetTlmHelperSettings();
+
 
         public static double CalculateBatteryPercentage(this string batteryvoltage)
         {
             try
             {
-                var percentage = (double)(double.Parse(batteryvoltage) - _batteryEmptyInMv) / (double)(_batteryFullInMv - _batteryEmptyInMv);
+                var percentage = (double)(double.Parse(batteryvoltage) - _settings.BatteryEmptyMv) / (double)(_settings.BatteryFullMv - _settings.BatteryEmptyMv);
                 percentage = percentage < 0 ? 0 : percentage > 100 ? 100 : percentage;
                 return percentage * 100;
             }
