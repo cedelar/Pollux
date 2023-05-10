@@ -2,10 +2,16 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+      <!-- Customize your theme here. -->
+      <item name="colorPrimary">@color/colorMain</item>
+      <item name="colorPrimaryDark">@color/colorMainDark</item>
+      <item name="colorAccent">@color/colorMain</item>
+      <item name="android:colorPressedHighlight">@color/colorListViewSelected</item>
+      <item name="android:colorLongPressedHighlight">@color/colorListViewSelectedLong</item>
+      <item name="android:colorFocusedHighlight">@color/colorListViewSelected</item>
+      <item name="android:colorActivatedHighlight">@color/colorListViewSelected</item>
+      <item name="android:activatedBackgroundIndicator">@color/colorListViewSelected</item>
+      <item name="android:fontFamily">@font/ubuntu</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -18,9 +24,10 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
   
     <style name="TextviewStyle">
-      <item name="android:textColor">@android:color/holo_blue_dark</item>
+      <item name="android:textColor">@color/colorMain</item>
       <item name="android:textStyle">bold</item>
       <item name="android:textSize">20dp</item>
       <item name="android:padding">10dp</item>
+      <item name="android:fontFamily">@font/ubuntu</item>
     </style>
 </resources>

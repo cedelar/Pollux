@@ -12,6 +12,9 @@ using Pollux.BleMonitor;
 using Android.Widget;
 using Pollux.Domain.Helper;
 using Microsoft.AppCenter.Crashes;
+using AndroidX.Core.Content;
+using Android;
+using Android.Content.PM;
 
 namespace Pollux
 {
@@ -35,6 +38,7 @@ namespace Pollux
             _bleServiceRunning = this.IsServiceRunning(nameof(BleMonitorService));
             SetupGui();
             SetupCrashReporting();
+            //GetRequiredPermissions();
         }
 
         private void SetupGui()
@@ -59,6 +63,16 @@ namespace Pollux
             _settingsButton.Click += NavigateToSettingsActivity;
 
             EvaluateButtonEnabled();
+        }
+
+        private void GetRequiredPermissions()
+        {
+            this.CheckAndRequestPermission(Manifest.Permission.Bluetooth);
+            this.CheckAndRequestPermission(Manifest.Permission.BluetoothAdmin);
+            this.CheckAndRequestPermission(Manifest.Permission.ForegroundService);
+            this.CheckAndRequestPermission(Manifest.Permission.AccessNetworkState);
+            this.CheckAndRequestPermission(Manifest.Permission.AccessCoarseLocation);
+            this.CheckAndRequestPermission(Manifest.Permission.AccessFineLocation);
         }
 
         private async void SetupCrashReporting()

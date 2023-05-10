@@ -77,6 +77,7 @@
     <Compile Include="Domain\Filter\FrameTypeFilter.cs" />
     <Compile Include="Domain\Filter\MinIntervalFilter.cs" />
     <Compile Include="Domain\Filter\WhitelistFilter.cs" />
+    <Compile Include="Domain\Helper\PermissionHelper.cs" />
     <Compile Include="Domain\Helper\ServiceHelper.cs" />
     <Compile Include="Domain\Helper\TlmHelper.cs" />
     <Compile Include="Domain\Helper\EddystoneHelper.cs" />
@@ -93,6 +94,14 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\font\ubuntu_light.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_light_italic.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_medium.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_medium_italic.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_regular.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_bold.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_bold_italic.ttf" />
+    <AndroidResource Include="Resources\font\ubuntu_italic.ttf" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.xml">
@@ -153,6 +162,9 @@
     <AndroidResource Include="Resources\layout\activity_settings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\font\ubuntu.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
