@@ -103,4 +103,32 @@ namespace Pollux.Domain.Data
         public string TimeSincePoweron { get; set; }
         public string BatteryPercentage { get; set; }
     }
+
+    public class PolarisDeviceInfoResult
+    {
+        public string DeviceName { get; set; }
+        public string DeviceModel { get; set; }
+        public string DeviceOS { get; set; }
+        public string AppVersion { get; set; }
+        public bool ConfigUpdated { get; set; }
+        public PolarisClientType ClientType { get; set; }
+        public PolarisPingData PingData { get; set; }
+    }
+
+    public class PolarisPingData
+    {
+        public string InstallationId { get; set; }
+        public string CurrentCoordinates { get; set; }
+        public string CurrentModule { get; set; }
+    }
+
+    public enum PolarisClientType
+    {
+        Unknown,
+        Handheld,
+        Gate,
+        Hertz,
+        BleMonitor,
+        Other
+    }
 }

@@ -15,6 +15,7 @@ namespace Pollux.Domain.Processing
         private readonly BeaconHandlerSettings _settings;
         private PolarisConnectionHandler _polarisConnection;
         private LocationHandler _locationHandler;
+        private DeviceInfoHandler _deviceInfoHandler;
 
         private List<IProcessingFilter> _commonFilters;
         private List<IProcessingFilter> _movementFilters;
@@ -28,7 +29,8 @@ namespace Pollux.Domain.Processing
         {
             _settings = SettingsHandler.GetBeaconHandlerSettings();
             _polarisConnection = new PolarisConnectionHandler();
-            _locationHandler = new LocationHandler();   
+            _locationHandler = new LocationHandler();
+            _deviceInfoHandler = new DeviceInfoHandler(_polarisConnection, _locationHandler);
             BeaconDictionary = new Dictionary<string, HistoricalBleBeacon>();
             SetupFilters();
         }
@@ -63,6 +65,8 @@ namespace Pollux.Domain.Processing
             //Check if Tlm needs to be send
             var tlmPermitted = PassesFilters(bleBeacon, _tlmFilters);
             if (tlmPermitted) SubmitTlm(bleBeacon);
+
+            _deviceInfoHandler.Ping();
         }
 
         private bool PassesFilters(BleBeacon beacon, List<IProcessingFilter> filters)
@@ -134,7 +138,6 @@ namespace Pollux.Domain.Processing
             if (success)
             {
                 NotificationupdateRequested?.Invoke(this, "Movement: " + bleBeacon.MacAdress);
-
             }
         }
 

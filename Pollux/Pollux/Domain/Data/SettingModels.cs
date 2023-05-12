@@ -8,8 +8,11 @@ namespace Pollux.Domain.Data
         public string LoginEndpoint { get; set; }
         public string MovementEndpoint { get; set; }
         public string TlmEndpoint { get; set; }
+        public string DeviceInfoEndpoint { get; set; }
+        public string PingEndpoint { get; set; }
         public string PolarisUsername { get; set; }
         public string PolarisPassword { get; set; }
+        public string DeviceName { get; set; }
     }
 
     public class BeaconHandlerSettings
@@ -19,6 +22,7 @@ namespace Pollux.Domain.Data
         public string MovementDestinationCode { get; set; }
         public int MovementMinSendIntervalSec { get; set; }
         public int TlmMinSendIntervalSec { get; set; }
+        public int PingMinSendIntervalSec { get; set; }
     }
 
     public class MonitorServiceSettings

@@ -21,6 +21,9 @@ namespace Pollux
     [Activity(Label = "@string/app_name", Icon = "@drawable/logo", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        //Quick fix: multiple leunches cause multiple instances of the service...?
+        private bool _bleServiceStartedThisAppLaunch;
+
         private bool _bleServiceRunning;
         private BleMonitorServiceConnection _serviceConnection;
 
@@ -38,7 +41,7 @@ namespace Pollux
             _bleServiceRunning = this.IsServiceRunning(nameof(BleMonitorService));
             SetupGui();
             SetupCrashReporting();
-            //GetRequiredPermissions();
+            GetRequiredPermissions();
         }
 
         private void SetupGui()
@@ -106,6 +109,7 @@ namespace Pollux
             View view = (View) sender;
             Snackbar.Make(view, "BleMonitor started", Snackbar.LengthLong)
                 .SetAction("Action", (View.IOnClickListener)null).Show();
+            _bleServiceStartedThisAppLaunch = true;
             EvaluateButtonEnabled();
         }
 
@@ -140,7 +144,7 @@ namespace Pollux
         private void EvaluateButtonEnabled()
         {
             _bleServiceRunning = this.IsServiceRunning(nameof(BleMonitorService));
-            _startButton.Enabled = !_bleServiceRunning;
+            _startButton.Enabled = !_bleServiceRunning && !_bleServiceStartedThisAppLaunch;
             _stopButton.Enabled = _bleServiceRunning;
             _monitorButton.Enabled = _bleServiceRunning;
             _settingsButton.Enabled = !_bleServiceRunning;

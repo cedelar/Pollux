@@ -1,39 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="0dip"
-    android:layout_weight="1"
-    android:orientation="vertical" >
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>   
-    <Button
-        android:id="@+id/startButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-    <Button
-        android:id="@+id/stopButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-    <Button
-        android:id="@+id/monitorButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-    <Button
-        android:id="@+id/settingsButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_gravity="center|bottom"
-        android:orientation="horizontal"
-        android:background="@android:color/black"
-        />
-</LinearLayout>
-
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/side_padding"
+        android:paddingRight="@dimen/side_padding"
+        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>   
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/monitorButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+    <GridLayout        
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_height"
+        android:layout_alignParentBottom="true"
+        android:rowCount="1"
+        android:columnCount="3"
+        android:background="@color/colorGrey-7">
+        <ImageView
+             android:layout_width="@dimen/footer_logo_width"
+             android:layout_height="@dimen/footer_logo_height"
+             android:layout_gravity="center_vertical"
+             android:layout_row="0"
+             android:layout_column="0"
+             android:src="@drawable/pollux"
+             android:contentDescription="@string/footer_logo_description"/>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="fill"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:text="@string/footer_version_text"/>
+    </GridLayout>
+</RelativeLayout>

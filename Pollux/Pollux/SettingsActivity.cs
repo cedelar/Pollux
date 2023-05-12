@@ -52,9 +52,12 @@ namespace Pollux
                 { nameof(PolarisConnectionSettings.ApiAdress), FindViewById<EditText>(Resource.Id.apiAdress) },
                 { nameof(PolarisConnectionSettings.PolarisUsername), FindViewById<EditText>(Resource.Id.polarisUsername) },
                 { nameof(PolarisConnectionSettings.PolarisPassword), FindViewById<EditText>(Resource.Id.polarisPassword) },
+                { nameof(PolarisConnectionSettings.DeviceName), FindViewById<EditText>(Resource.Id.deviceName) },
                 { nameof(BeaconHandlerSettings.MovementDestinationCode), FindViewById<EditText>(Resource.Id.movementDestinationCode) },
                 { nameof(BeaconHandlerSettings.MovementMinSendIntervalSec), FindViewById<EditText>(Resource.Id.movementMinSendIntervalSec) },
                 { nameof(BeaconHandlerSettings.TlmMinSendIntervalSec), FindViewById<EditText>(Resource.Id.tlmMinSendIntervalSec) },
+                { nameof(BeaconHandlerSettings.PingMinSendIntervalSec), FindViewById<EditText>(Resource.Id.pingMinSendIntervalSec) },
+                { nameof(BeaconHandlerSettings.CommonWhitelist), FindViewById<EditText>(Resource.Id.commonWhitelist) },
                 { nameof(MonitorServiceSettings.DurationOfBleScansSec), FindViewById<EditText>(Resource.Id.durationOfBleScansSec) },
                 { nameof(MonitorServiceSettings.TimeBetweenBleScansSec), FindViewById<EditText>(Resource.Id.timeBetweenBleScansSec) },
                 { nameof(LocationHandlerSettings.LocationRefreshTimeSec), FindViewById<EditText>(Resource.Id.locationRefreshTimeSec) },
@@ -72,9 +75,12 @@ namespace Pollux
             _editTexts[nameof(PolarisConnectionSettings.ApiAdress)].Text = _polarisConnectionSettings.ApiAdress;
             _editTexts[nameof(PolarisConnectionSettings.PolarisUsername)].Text = _polarisConnectionSettings.PolarisUsername;
             _editTexts[nameof(PolarisConnectionSettings.PolarisPassword)].Text = _polarisConnectionSettings.PolarisPassword;
+            _editTexts[nameof(PolarisConnectionSettings.DeviceName)].Text = _polarisConnectionSettings.DeviceName;
             _editTexts[nameof(BeaconHandlerSettings.MovementDestinationCode)].Text = _beaconHandlerSettings.MovementDestinationCode;
             _editTexts[nameof(BeaconHandlerSettings.MovementMinSendIntervalSec)].Text = _beaconHandlerSettings.MovementMinSendIntervalSec.ToString();
             _editTexts[nameof(BeaconHandlerSettings.TlmMinSendIntervalSec)].Text = _beaconHandlerSettings.TlmMinSendIntervalSec.ToString();
+            _editTexts[nameof(BeaconHandlerSettings.PingMinSendIntervalSec)].Text = _beaconHandlerSettings.PingMinSendIntervalSec.ToString();
+            _editTexts[nameof(BeaconHandlerSettings.CommonWhitelist)].Text = string.Join(", ", _beaconHandlerSettings.CommonWhitelist);
             _editTexts[nameof(MonitorServiceSettings.DurationOfBleScansSec)].Text = _monitorServiceSettings.DurationOfBleScansSec.ToString();
             _editTexts[nameof(MonitorServiceSettings.TimeBetweenBleScansSec)].Text = _monitorServiceSettings.TimeBetweenBleScansSec.ToString();
             _editTexts[nameof(LocationHandlerSettings.LocationRefreshTimeSec)].Text = _locationHandlerSettings.LocationRefreshTimeSec.ToString();
@@ -95,9 +101,12 @@ namespace Pollux
                 _polarisConnectionSettings.ApiAdress = _editTexts[nameof(PolarisConnectionSettings.ApiAdress)].Text;
                 _polarisConnectionSettings.PolarisUsername = _editTexts[nameof(PolarisConnectionSettings.PolarisUsername)].Text;
                 _polarisConnectionSettings.PolarisPassword = _editTexts[nameof(PolarisConnectionSettings.PolarisPassword)].Text;
+                _polarisConnectionSettings.DeviceName = _editTexts[nameof(PolarisConnectionSettings.DeviceName)].Text;
                 _beaconHandlerSettings.MovementDestinationCode = _editTexts[nameof(BeaconHandlerSettings.MovementDestinationCode)].Text;
                 _beaconHandlerSettings.MovementMinSendIntervalSec = Convert.ToInt32(_editTexts[nameof(BeaconHandlerSettings.MovementMinSendIntervalSec)].Text);
                 _beaconHandlerSettings.TlmMinSendIntervalSec = Convert.ToInt32(_editTexts[nameof(BeaconHandlerSettings.TlmMinSendIntervalSec)].Text);
+                _beaconHandlerSettings.PingMinSendIntervalSec = Convert.ToInt32(_editTexts[nameof(BeaconHandlerSettings.PingMinSendIntervalSec)].Text);
+                _beaconHandlerSettings.CommonWhitelist = _editTexts[nameof(BeaconHandlerSettings.CommonWhitelist)].Text.Split(',', ';', '-').ToList().Select(s => s.Trim()).ToList();
                 _monitorServiceSettings.DurationOfBleScansSec = Convert.ToInt32(_editTexts[nameof(MonitorServiceSettings.DurationOfBleScansSec)].Text);
                 _monitorServiceSettings.TimeBetweenBleScansSec = Convert.ToInt32(_editTexts[nameof(MonitorServiceSettings.TimeBetweenBleScansSec)].Text);
                 _locationHandlerSettings.LocationRefreshTimeSec = Convert.ToInt32(_editTexts[nameof(LocationHandlerSettings.LocationRefreshTimeSec)].Text);

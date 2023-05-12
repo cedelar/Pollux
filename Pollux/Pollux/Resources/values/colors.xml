@@ -5,4 +5,5 @@
   <color name="colorWhite">#FFFFFF</color>
   <color name="colorListViewSelected">#B2E5E4</color>
   <color name="colorListViewSelectedLong">#99DDDC</color>
+  <color name="colorGrey-7">#EEF0F2</color>
 </resources>

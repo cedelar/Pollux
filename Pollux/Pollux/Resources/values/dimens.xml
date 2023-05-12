@@ -1,3 +1,8 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="footer_height">26dp</dimen>
+    <dimen name="footer_logo_width">100dp</dimen>
+    <dimen name="footer_logo_height">18dp</dimen>
+    <dimen name="side_padding">16dp</dimen>
+    <dimen name="side_padding_small">4dp</dimen>
 </resources>

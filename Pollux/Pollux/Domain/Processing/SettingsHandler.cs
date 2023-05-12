@@ -19,8 +19,11 @@ namespace Pollux.Domain.Processing
                 LoginEndpoint = "api/Authentication/Login",
                 MovementEndpoint = "apiinternal/ActionConfirmation/Movement",
                 TlmEndpoint = "apiinternal/BleTag/PostBleTLM",
+                DeviceInfoEndpoint = "apiinternal/DeviceInfo/Post",
+                PingEndpoint = "apiinternal/Configuration/PingWithData",
                 PolarisUsername = "Pollux",
-                PolarisPassword = "Pollux01"
+                PolarisPassword = "Pollux01",
+                DeviceName = "Unnamed Device"
             };       
         }
 
@@ -33,10 +36,11 @@ namespace Pollux.Domain.Processing
             return new BeaconHandlerSettings()
             {
                 CommonWhiteListEnabled = false,
-                CommonWhitelist = new List<string>() {"F2:58:48:27:9C:56", "CA:F4:A4:77:77:26"},
+                CommonWhitelist = new List<string>() { "C3:7F:40:2B:BB:0F", "F5:74:01:91:37:EE", "ED:D3:E3:B4:03:32"},
                 MovementDestinationCode = "Pollux",
-                MovementMinSendIntervalSec = 60,
-                TlmMinSendIntervalSec = 30
+                MovementMinSendIntervalSec = 30,
+                TlmMinSendIntervalSec = 120,
+                PingMinSendIntervalSec = 60,
             };
         }
         
@@ -52,7 +56,7 @@ namespace Pollux.Domain.Processing
                 TimeBetweenBleScansSec = 1,
                 NotificationTitleText = "Pollux Ble Monitor",
                 NotificationContentText = "Activated",
-                AllowNotificationUpdates = true
+                AllowNotificationUpdates = false
             };           
         }
 

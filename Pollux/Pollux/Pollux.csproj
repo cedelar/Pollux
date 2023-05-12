@@ -82,6 +82,7 @@
     <Compile Include="Domain\Helper\TlmHelper.cs" />
     <Compile Include="Domain\Helper\EddystoneHelper.cs" />
     <Compile Include="Domain\Processing\BleBeaconHandler.cs" />
+    <Compile Include="Domain\Processing\DeviceInfoHandler.cs" />
     <Compile Include="Domain\Processing\LocationHandler.cs" />
     <Compile Include="Domain\Processing\SettingsHandler.cs" />
     <Compile Include="MainActivity.cs" />
@@ -151,6 +152,9 @@
     <PackageReference Include="System.Text.Json">
       <Version>7.0.2</Version>
     </PackageReference>
+    <PackageReference Include="Xam.Plugin.DeviceInfo">
+      <Version>4.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.2.0.5" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
@@ -165,6 +169,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\font\ubuntu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pollux.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

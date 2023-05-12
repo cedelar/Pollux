@@ -1,43 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>  
-<LinearLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:orientation="vertical" 
-    android:layout_width="match_parent" 
-    android:layout_height="match_parent"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp">  
-    <LinearLayout
-            android:layout_width="match_parent"
+<RelativeLayout  
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout 
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/side_padding_small"
+        android:paddingRight="@dimen/side_padding_small"
+        android:orientation="vertical" >  
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" 
+                android:text="Order by: "/>
+            <Button
+                android:id="@+id/macSortButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" 
+                android:layout_margin="5dp"
+                android:text="Mac"/>
+            <Button
+                android:id="@+id/rssiSortButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" 
+                android:layout_margin="5dp"
+                android:text="Rssi"/>
+            <TextView
+                android:id="@+id/currentFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <ListView 
+            android:id="@+id/listview" 
+            android:layout_height="match_parent" 
+            android:layout_width="wrap_content"/>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/footer_height"
+            android:layout_gravity="fill"/>
+    </LinearLayout>  
+    <GridLayout        
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_height"
+        android:layout_alignParentBottom="true"
+        android:rowCount="1"
+        android:columnCount="3"
+        android:background="@color/colorGrey-7">
+        <ImageView
+             android:layout_width="@dimen/footer_logo_width"
+             android:layout_height="@dimen/footer_logo_height"
+             android:layout_gravity="center_vertical"
+             android:layout_row="0"
+             android:layout_column="0"
+             android:src="@drawable/pollux"
+             android:contentDescription="@string/footer_logo_description"/>
+        <Space
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="fill"
+            />
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" 
-            android:text="Order by: "/>
-        <Button
-            android:id="@+id/macSortButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" 
-            android:layout_margin="5dp"
-            android:text="Mac"/>
-        <Button
-            android:id="@+id/rssiSortButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" 
-            android:layout_margin="5dp"
-            android:text="Rssi"/>
-        <TextView
-            android:id="@+id/currentFilter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-    </LinearLayout>
-    <ListView 
-        android:id="@+id/listview" 
-        android:layout_height="match_parent" 
-        android:layout_width="wrap_content"/>  
-</LinearLayout>  
+            android:layout_gravity="center_vertical"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:text="@string/footer_version_text"/>
+    </GridLayout>
+</RelativeLayout>

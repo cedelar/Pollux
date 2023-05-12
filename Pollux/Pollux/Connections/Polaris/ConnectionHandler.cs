@@ -31,7 +31,8 @@ namespace Pollux.Domain.Connection
         {
             if (mr != null)
             {
-                var response = await SendJsonToServer(JsonConvert.SerializeObject(mr), _settings.MovementEndpoint);
+                var json = JsonConvert.SerializeObject(mr);
+                var response = await SendJsonToServer(json, _settings.MovementEndpoint);
                 if (response != null)
                 {
                     return response.IsSuccessStatusCode;
@@ -44,8 +45,36 @@ namespace Pollux.Domain.Connection
         {
             if (messages != null && messages.Any())
             {
-                var j = JsonConvert.SerializeObject(messages);
-                var response = await SendJsonToServer(JsonConvert.SerializeObject(messages), _settings.TlmEndpoint);
+                var json = JsonConvert.SerializeObject(messages);
+                var response = await SendJsonToServer(json, _settings.TlmEndpoint);
+                if (response != null)
+                {
+                    return response.IsSuccessStatusCode;
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> SubmitDeviceInfo(PolarisDeviceInfoResult dir)
+        {
+            if (dir != null)
+            {
+                var json = JsonConvert.SerializeObject(dir);
+                var response = await SendJsonToServer(json, _settings.DeviceInfoEndpoint);
+                if (response != null)
+                {
+                    return response.IsSuccessStatusCode;
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> SubmitPing(PolarisPingData ping)
+        {
+            if (ping != null)
+            {
+                var json = JsonConvert.SerializeObject(ping);
+                var response = await SendJsonToServer(json, _settings.PingEndpoint);
                 if (response != null)
                 {
                     return response.IsSuccessStatusCode;

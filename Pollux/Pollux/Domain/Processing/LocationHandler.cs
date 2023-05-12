@@ -49,7 +49,9 @@ namespace Pollux.Domain.Processing
                     Latitude = location.Latitude,
                     Longitude = location.Longitude,
                     Accuracy = location.Accuracy ?? 0
-                };        
+                };  
+                
+                _lastRefresh = DateTime.UtcNow;
             }
             catch (Exception ex)
             {
