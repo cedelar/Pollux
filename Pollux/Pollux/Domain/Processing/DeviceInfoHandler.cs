@@ -61,7 +61,7 @@ namespace Pollux.Domain.Processing
             var deviceInfo = new PolarisDeviceInfoResult()
             {
                 DeviceName = _polarisSettings.DeviceName,
-                DeviceModel = deviceModel,
+                DeviceModel = deviceModel.Length > 15 ? deviceModel.Substring(deviceModel.Length - 15) : deviceModel, //Polaris has MaxLength 15
                 DeviceOS = deviceOS,
                 ClientType = PolarisClientType.BleMonitor,
                 AppVersion = appVersion,

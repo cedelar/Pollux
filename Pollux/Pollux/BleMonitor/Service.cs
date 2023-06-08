@@ -151,5 +151,13 @@ namespace Pollux.BleMonitor
             }
             return new Dictionary<string, HistoricalBleBeacon>();
         }
+
+        public void ResetBeaconData()
+        {
+            if(_beaconHandler != null)
+            {
+                _beaconHandler.ResetMemory();
+            }
+        }
     }
 }

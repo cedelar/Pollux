@@ -25,6 +25,8 @@ namespace Pollux
 
         private Button _toggleSortByRssiButton;
         private Button _toggleSortByMacButton;
+        private ImageButton _refreshListButton;
+        private TextView _beaconAmountInListLabel;
         private TextView _currentFilterLabel;
 
         private bool _sortByRssiEnabled;
@@ -54,11 +56,16 @@ namespace Pollux
             _refreshTimer.Elapsed += OnRefreshTimerElapsed;
 
             _currentFilterLabel = FindViewById<TextView>(Resource.Id.currentFilter);
+            _beaconAmountInListLabel = FindViewById<TextView>(Resource.Id.beaconAmountInList);
             _toggleSortByMacButton = FindViewById<Button>(Resource.Id.macSortButton);
             _toggleSortByRssiButton = FindViewById<Button>(Resource.Id.rssiSortButton);
+            _refreshListButton = FindViewById<ImageButton>(Resource.Id.refreshList);
             _toggleSortByMacButton.Click += ToggleSortByMAC;
             _toggleSortByRssiButton.Click += ToggleSortByRssi;
+            _refreshListButton.Click += RefreshList;
             ToggleSortByRssi(this, null);
+
+            _beaconAmountInListLabel.Text = "0";
         }
 
         private void ToggleSortByRssi(object sender, EventArgs eventArgs)
@@ -73,6 +80,15 @@ namespace Pollux
             _sortByMacEnabled = !_sortByMacEnabled;
             _sortByRssiEnabled = false;
             SetCurrentFilterLabel();
+        }
+
+        private void RefreshList(object sender, EventArgs eventArgs)
+        {
+            if(_serviceConnection != null)
+            {
+                _serviceConnection.ResetBeaconData();
+                OnRefreshTimerElapsed(null, null);
+            }
         }
 
         private void SetCurrentFilterLabel()
@@ -91,6 +107,7 @@ namespace Pollux
         private void OnRefreshTimerElapsed(object sender, ElapsedEventArgs e)
         {
             _listViewData = GetAndConvertBeaconData();
+            _beaconAmountInListLabel.Text = _listViewData.Length.ToString();
             RunOnUiThread(() => {
                 var adapter = (DualLineListViewAdapter)_beaconListView.Adapter;
                 adapter.SetItems(_listViewData);

@@ -11,15 +11,26 @@
         android:paddingRight="@dimen/side_padding_small"
         android:orientation="vertical" >  
         <LinearLayout
-                android:layout_width="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" 
-                android:text="Order by: "/>
+                android:layout_gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" 
+                    android:text="Order by: "/>
+                <TextView
+                    android:id="@+id/currentFilter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
             <Button
                 android:id="@+id/macSortButton"
                 android:layout_width="match_parent"
@@ -34,11 +45,36 @@
                 android:layout_weight="1" 
                 android:layout_margin="5dp"
                 android:text="Rssi"/>
-            <TextView
-                android:id="@+id/currentFilter"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/beaconAmountInList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Beacons"/>
+
+            </LinearLayout>
+            <ImageButton
+                android:id="@+id/refreshList"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:contentDescription="refresh"
+                android:src="@drawable/refresh"
+                android:tint="@color/colorWhite"
+                android:adjustViewBounds="true"
+                android:padding="16dp"
+                android:scaleType="fitCenter" 
+                android:backgroundTint="@color/colorMain"/>
         </LinearLayout>
         <ListView 
             android:id="@+id/listview" 

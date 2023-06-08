@@ -46,5 +46,13 @@ namespace Pollux.BleMonitor
             }
             return new Dictionary<string, HistoricalBleBeacon>();
         }
+
+        public void ResetBeaconData()
+        {
+            if (Binder != null)
+            {
+                Binder.ResetBeaconData();
+            }
+        }
     }
 }

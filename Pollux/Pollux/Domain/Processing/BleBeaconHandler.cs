@@ -23,7 +23,7 @@ namespace Pollux.Domain.Processing
 
         public event EventHandler<string> NotificationupdateRequested;
 
-        public Dictionary<string, HistoricalBleBeacon> BeaconDictionary;
+        public Dictionary<string, HistoricalBleBeacon> BeaconDictionary { get; }
 
         public BleBeaconHandler()
         {
@@ -162,6 +162,11 @@ namespace Pollux.Domain.Processing
                     NotificationupdateRequested?.Invoke(this, "Tlm: " + bleBeacon.MacAdress);
                 }
             }
+        }
+
+        public void ResetMemory()
+        {
+            BeaconDictionary.Clear();
         }
     }
 }
