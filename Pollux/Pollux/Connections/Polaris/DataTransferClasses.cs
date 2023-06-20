@@ -15,6 +15,8 @@ namespace Pollux.Domain.Data
     //Mirrors MovementResult on Polaris for datatransfer
     public class PolarisMovementResult
     {
+        public string DeviceName { get; set; }
+
         public string DestinationCode { get; set; }
 
         public List<PolarisScannedTag> ScannedTags { get; set; }

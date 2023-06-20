@@ -12,10 +12,12 @@ namespace Pollux.Domain.Processing
 {
     public class BleBeaconHandler
     {
-        private readonly BeaconHandlerSettings _settings;
+        private readonly BeaconHandlerSettings _beaconhandlerSettings;
+        private readonly PolarisConnectionSettings _polarisSettings;
         private PolarisConnectionHandler _polarisConnection;
         private LocationHandler _locationHandler;
         private DeviceInfoHandler _deviceInfoHandler;
+
 
         private List<IProcessingFilter> _commonFilters;
         private List<IProcessingFilter> _movementFilters;
@@ -27,7 +29,8 @@ namespace Pollux.Domain.Processing
 
         public BleBeaconHandler()
         {
-            _settings = SettingsHandler.GetBeaconHandlerSettings();
+            _beaconhandlerSettings = SettingsHandler.GetBeaconHandlerSettings();
+            _polarisSettings = SettingsHandler.GetPolarisConnectionSettings();
             _polarisConnection = new PolarisConnectionHandler();
             _locationHandler = new LocationHandler();
             _deviceInfoHandler = new DeviceInfoHandler(_polarisConnection, _locationHandler);
@@ -86,12 +89,12 @@ namespace Pollux.Domain.Processing
         private void SetupFilters()
         {
             _commonFilters = new List<IProcessingFilter>();
-            if (_settings.CommonWhiteListEnabled)
+            if (_beaconhandlerSettings.CommonWhiteListEnabled)
             {
                 _commonFilters.Add(
                     new WhitelistFilter()
                     {
-                        Whitelist = _settings.CommonWhitelist
+                        Whitelist = _beaconhandlerSettings.CommonWhitelist
                     });
             }
 
@@ -100,7 +103,7 @@ namespace Pollux.Domain.Processing
                 new MinIntervalFilter()
                 {
                     EventType = EventTypes.MovementSend,
-                    IntervalInSec = _settings.MovementMinSendIntervalSec
+                    IntervalInSec = _beaconhandlerSettings.MovementMinSendIntervalSec
                 });
 
             _tlmFilters = new List<IProcessingFilter>();
@@ -113,7 +116,7 @@ namespace Pollux.Domain.Processing
                 new MinIntervalFilter()
                 {
                     EventType = EventTypes.TlmSend,
-                    IntervalInSec = _settings.TlmMinSendIntervalSec
+                    IntervalInSec = _beaconhandlerSettings.TlmMinSendIntervalSec
                 });
         }
 
@@ -122,7 +125,8 @@ namespace Pollux.Domain.Processing
             BeaconDictionary[bleBeacon.MacAdress].Event(EventTypes.MovementSend);
             var movement = new PolarisMovementResult()
             {
-                DestinationCode = _settings.MovementDestinationCode,
+                DeviceName = _polarisSettings.DeviceName,
+                DestinationCode = _beaconhandlerSettings.MovementDestinationCode,
                 ScannedTags = new List<PolarisScannedTag>()
                 {
                     new PolarisScannedTag()
