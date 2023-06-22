@@ -41,8 +41,8 @@ namespace Pollux.Domain.Processing
                     "F2:58:48:27:9C:56",
                     "CA:F4:A4:77:77:26",
                     //Beacons POC1
-                    "C3:7F:40:2B:BB:0F", 
-                    "F5:74:01:91:37:EE", 
+                    "C3:7F:40:2B:BB:0F",
+                    "F5:74:01:91:37:EE",
                     "ED:D3:E3:B4:03:32",
                     //Beacons POC2
                     "EC:96:FB:22:B6:AF",
@@ -144,12 +144,8 @@ namespace Pollux.Domain.Processing
                     "CF:66:68:6A:BA:B6",
                     "F1:18:08:1D:74:79",
                     "F3:13:6A:8B:88:24",
-                    "D2:26:E4:EB:32:A8",
-
+                    "D2:26:E4:EB:32:A8"
                 },
-                
-                
-                
                 MovementDestinationCode = "Pollux",
                 MovementMinSendIntervalSec = 30,
                 TlmMinSendIntervalSec = 120,
@@ -198,6 +194,18 @@ namespace Pollux.Domain.Processing
             };
         }
 
+        public static GuiSettings GetGuiSettings()
+        {
+            if (Preferences.ContainsKey(SettingObjects.GuiSettings))
+            {
+                return JsonConvert.DeserializeObject<GuiSettings>(Preferences.Get(SettingObjects.GuiSettings, null));
+            }
+            return new GuiSettings()
+            {
+                HideNonWhitelistedBeaconsInMonitor = true,
+            };
+        }
+
         public static void Save(this PolarisConnectionSettings settings)
         {
             Preferences.Set(SettingObjects.PolarisConnectionSettings, JsonConvert.SerializeObject(settings));
@@ -214,6 +222,10 @@ namespace Pollux.Domain.Processing
         {
             Preferences.Set(SettingObjects.LocationHandlerSettings, JsonConvert.SerializeObject(settings));
         }
+        public static void Save(this GuiSettings settings)
+        {
+            Preferences.Set(SettingObjects.GuiSettings, JsonConvert.SerializeObject(settings));
+        }
     }
 
     public static class SettingObjects
@@ -223,5 +235,6 @@ namespace Pollux.Domain.Processing
         public static readonly string MonitorServiceSettings = "MonitorServiceSettings";
         public static readonly string LocationHandlerSettings = "LocationHandlerSettings";
         public static readonly string TlmHelperSettings = "TlmHelperSettings";
+        public static readonly string GuiSettings = "GuiSettings";
     }
 }

@@ -29,6 +29,7 @@ namespace Pollux
         private MonitorServiceSettings _monitorServiceSettings;
         private LocationHandlerSettings _locationHandlerSettings;
         private TlmHelperSettings _tlmHelperSettings;
+        private GuiSettings _guiSettings;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -41,6 +42,7 @@ namespace Pollux
             _monitorServiceSettings = SettingsHandler.GetMonitorServiceSettings();
             _locationHandlerSettings = SettingsHandler.GetLocationHandlerSettings();
             _tlmHelperSettings = SettingsHandler.GetTlmHelperSettings();
+            _guiSettings = SettingsHandler.GetGuiSettings();
 
             SetupGui();
         }
@@ -68,7 +70,8 @@ namespace Pollux
             _checkBoxes = new Dictionary<string, CheckBox>()
             {
                 { nameof(BeaconHandlerSettings.CommonWhiteListEnabled), FindViewById<CheckBox>(Resource.Id.commonWhiteListEnabled) },
-                { nameof(MonitorServiceSettings.AllowNotificationUpdates), FindViewById<CheckBox>(Resource.Id.allowNotificationUpdates) }
+                { nameof(MonitorServiceSettings.AllowNotificationUpdates), FindViewById<CheckBox>(Resource.Id.allowNotificationUpdates) },
+                { nameof(GuiSettings.HideNonWhitelistedBeaconsInMonitor), FindViewById<CheckBox>(Resource.Id.hideNonWhitelistedBeaconsInMonitor) }
             };
             _saveButton = FindViewById<Button>(Resource.Id.saveButton);
 
@@ -89,6 +92,7 @@ namespace Pollux
 
             _checkBoxes[nameof(BeaconHandlerSettings.CommonWhiteListEnabled)].Checked = _beaconHandlerSettings.CommonWhiteListEnabled;
             _checkBoxes[nameof(MonitorServiceSettings.AllowNotificationUpdates)].Checked = _monitorServiceSettings.AllowNotificationUpdates;
+            _checkBoxes[nameof(GuiSettings.HideNonWhitelistedBeaconsInMonitor)].Checked = _guiSettings.HideNonWhitelistedBeaconsInMonitor;
 
             _saveButton.Click += SaveSettings;
         }
@@ -115,11 +119,14 @@ namespace Pollux
 
                 _beaconHandlerSettings.CommonWhiteListEnabled = _checkBoxes[nameof(BeaconHandlerSettings.CommonWhiteListEnabled)].Checked;
                 _monitorServiceSettings.AllowNotificationUpdates = _checkBoxes[nameof(MonitorServiceSettings.AllowNotificationUpdates)].Checked;
+                _guiSettings.HideNonWhitelistedBeaconsInMonitor = _checkBoxes[nameof(GuiSettings.HideNonWhitelistedBeaconsInMonitor)].Checked;
 
                 _polarisConnectionSettings.Save();
                 _beaconHandlerSettings.Save();
                 _monitorServiceSettings.Save();
                 _locationHandlerSettings.Save();
+                _guiSettings.Save();
+
             }catch(Exception ex)
             {
                 Snackbar.Make(view, "Error: " + ex.Message, Snackbar.LengthLong).SetAction("Action", (View.IOnClickListener)null).Show();

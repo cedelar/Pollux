@@ -45,4 +45,9 @@ namespace Pollux.Domain.Data
         public int BatteryFullMv { get; set; }
 
     }
+
+    public class GuiSettings
+    {
+        public bool HideNonWhitelistedBeaconsInMonitor { get; set; }
+    }
 }

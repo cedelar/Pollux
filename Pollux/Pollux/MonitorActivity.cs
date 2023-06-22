@@ -5,7 +5,9 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using Pollux.Adapters;
 using Pollux.BleMonitor;
+using Pollux.Domain.Data;
 using Pollux.Domain.Helper;
+using Pollux.Domain.Processing;
 using System;
 using System.Linq;
 using System.Timers;
@@ -19,6 +21,8 @@ namespace Pollux
         private static string _dateTimeFormat => "HH:mm:ss";
         private string[][] _listViewData;
         private BleMonitorServiceConnection _serviceConnection;
+        private GuiSettings _guiSettings;
+        private BeaconHandlerSettings _beaconHandlerSettings;
 
         private ListView _beaconListView;
         private Timer _refreshTimer;
@@ -50,6 +54,9 @@ namespace Pollux
 
                 BindService(intent, _serviceConnection, Bind.AutoCreate);
             }
+
+            _guiSettings = SettingsHandler.GetGuiSettings();
+            _beaconHandlerSettings = SettingsHandler.GetBeaconHandlerSettings();    
 
             _beaconListView = FindViewById<ListView>(Resource.Id.listview);
             _refreshTimer = new Timer(1000);
@@ -129,6 +136,12 @@ namespace Pollux
                 return new string[0][];
             }
             var data = _serviceConnection.GetBeaconData().Values.ToList();
+
+            if(_beaconHandlerSettings.CommonWhiteListEnabled && _guiSettings.HideNonWhitelistedBeaconsInMonitor)
+            {
+                data = data.Where(x => _beaconHandlerSettings.CommonWhitelist.Contains(x.MacAdress)).ToList();
+            }
+
             if (_sortByMacEnabled)
             {
                 data = data.OrderBy(x => x.MacAdress).ToList();
@@ -137,6 +150,7 @@ namespace Pollux
             {
                 data = data.OrderByDescending(x => x.LastRssi).ToList();
             }
+
             return data.Select(x => new string[] { 
                 x.MacAdress + " (" + x.LastRssi + "dB)  Seen: " + DateTimeConverter(x.LastSeenTime),
                 "Movement: " + DateTimeConverter(x.TimeOfEvent(Domain.Data.EventTypes.MovementSend)) + ", Tlm: " + DateTimeConverter(x.TimeOfEvent(Domain.Data.EventTypes.TlmSend))
