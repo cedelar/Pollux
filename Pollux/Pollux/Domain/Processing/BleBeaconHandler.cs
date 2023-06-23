@@ -138,11 +138,8 @@ namespace Pollux.Domain.Processing
                 MovementType = PolarisMovementType.Movement,
                 Coordinates = JsonConvert.SerializeObject(await _locationHandler.GetCurrentCoordinates())
             };
-            var success = await _polarisConnection.SubmitMovement(movement);
-            if (success)
-            {
-                NotificationupdateRequested?.Invoke(this, "Movement: " + bleBeacon.MacAdress);
-            }
+            _polarisConnection.SubmitMovement(movement);
+            NotificationupdateRequested?.Invoke(this, "Movement: " + bleBeacon.MacAdress);
         }
 
         private async void SubmitTlm(BleBeacon bleBeacon)
@@ -160,11 +157,8 @@ namespace Pollux.Domain.Processing
                     TimeSincePoweron = tlmFrame.getDataField(TlmDatafields.TimeSincePoweron),
                     BatteryPercentage = ((int)tlmFrame.getDataField(TlmDatafields.BatteryVoltage).CalculateBatteryPercentage()).ToString(),  //Polaris requires int
                 };
-                var success = await _polarisConnection.SubmitTlm(new List<PolarisTLMMessage>() {tlmMessage});
-                if (success)
-                {
-                    NotificationupdateRequested?.Invoke(this, "Tlm: " + bleBeacon.MacAdress);
-                }
+                _polarisConnection.SubmitTlm(tlmMessage);
+                NotificationupdateRequested?.Invoke(this, "Tlm: " + bleBeacon.MacAdress);     
             }
         }
 

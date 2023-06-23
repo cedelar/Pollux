@@ -6,15 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Pollux.Domain.Connection
 {
     public class PolarisConnectionHandler
     {
+        private readonly Timer _bulkSendTimer;
         private readonly PolarisConnectionSettings _settings;
         private readonly HttpClient _polarisclient;
         private readonly PolarisAuthentication _authentication;
+
+        private IList<PolarisMovementResult> _movements;
+        private IList<PolarisTLMMessage> _tlms;
 
         private PolarisAuthenticationResult _authResult;
 
@@ -24,35 +29,58 @@ namespace Pollux.Domain.Connection
             _authentication = new PolarisAuthentication() { UserName = _settings.PolarisUsername, Password = _settings.PolarisPassword };
             _polarisclient = new HttpClient();
             _polarisclient.BaseAddress = new Uri(_settings.ApiAdress);
+
+            _movements = new List<PolarisMovementResult>();
+            _tlms = new List<PolarisTLMMessage>();
+
+            _bulkSendTimer = new Timer(OnBulksendTimerElapsed);
+            _bulkSendTimer.Change(10000, Timeout.Infinite);
             InjectPolarisAuthentication();
         }
 
-        public async Task<bool> SubmitMovement(PolarisMovementResult mr)
+        //TODO: rework bulk send code
+        private async void OnBulksendTimerElapsed(object state)
         {
-            if (mr != null)
+            if (_movements != null && _movements.Count > 0)
             {
-                var json = JsonConvert.SerializeObject(mr);
-                var response = await SendJsonToServer(json, _settings.MovementEndpoint);
-                if (response != null)
+                var aggregatedMovement = new PolarisMovementResult()
                 {
-                    return response.IsSuccessStatusCode;
+                    DeviceName = _movements[0].DeviceName,
+                    DestinationCode = _movements[0].DestinationCode,
+                    ScannedTags = _movements.Select(m => m.ScannedTags[0]).ToList(),
+                    MovementType = _movements[0].MovementType,
+                    Coordinates = _movements[0].Coordinates
+                };
+
+                var movementjson = JsonConvert.SerializeObject(aggregatedMovement);
+                var movementresponse = await SendJsonToServer(movementjson, _settings.MovementEndpoint);
+                if (movementresponse != null && movementresponse.IsSuccessStatusCode)
+                {
+                    _movements.Clear();
                 }
             }
-            return false;
+
+            if(_tlms != null && _tlms.Count > 0)
+            {
+                var tlmjson = JsonConvert.SerializeObject(_tlms);
+                var tlmresponse = await SendJsonToServer(tlmjson, _settings.TlmEndpoint);
+                if (tlmresponse != null && tlmresponse.IsSuccessStatusCode)
+                {
+                    _tlms.Clear();
+                }             
+            }
+
+            _bulkSendTimer.Change(10000, Timeout.Infinite);
         }
 
-        public async Task<bool> SubmitTlm(List<PolarisTLMMessage> messages)
+        public void SubmitMovement(PolarisMovementResult mr)
         {
-            if (messages != null && messages.Any())
-            {
-                var json = JsonConvert.SerializeObject(messages);
-                var response = await SendJsonToServer(json, _settings.TlmEndpoint);
-                if (response != null)
-                {
-                    return response.IsSuccessStatusCode;
-                }
-            }
-            return false;
+            _movements.Add(mr);
+        }
+
+        public void SubmitTlm(PolarisTLMMessage tlm)
+        {
+            _tlms.Add(tlm);
         }
 
         public async Task<bool> SubmitDeviceInfo(PolarisDeviceInfoResult dir)
