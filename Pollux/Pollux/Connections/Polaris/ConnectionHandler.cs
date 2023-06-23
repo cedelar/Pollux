@@ -14,9 +14,13 @@ namespace Pollux.Domain.Connection
     public class PolarisConnectionHandler
     {
         private readonly Timer _bulkSendTimer;
-        private readonly PolarisConnectionSettings _settings;
+        private readonly PolarisConnectionSettings _connectionSettings;
+        //TODO: add setting for bulksendtimer
+        private readonly LocationHandlerSettings _locationHandlerSettings;
         private readonly HttpClient _polarisclient;
         private readonly PolarisAuthentication _authentication;
+
+        private int _timerDueTime => _locationHandlerSettings.LocationRefreshTimeSec * 1000;
 
         private IList<PolarisMovementResult> _movements;
         private IList<PolarisTLMMessage> _tlms;
@@ -25,16 +29,18 @@ namespace Pollux.Domain.Connection
 
         public PolarisConnectionHandler()
         {
-            _settings = SettingsHandler.GetPolarisConnectionSettings();
-            _authentication = new PolarisAuthentication() { UserName = _settings.PolarisUsername, Password = _settings.PolarisPassword };
+            _connectionSettings = SettingsHandler.GetPolarisConnectionSettings();
+            _locationHandlerSettings = SettingsHandler.GetLocationHandlerSettings();
+
+            _authentication = new PolarisAuthentication() { UserName = _connectionSettings.PolarisUsername, Password = _connectionSettings.PolarisPassword };
             _polarisclient = new HttpClient();
-            _polarisclient.BaseAddress = new Uri(_settings.ApiAdress);
+            _polarisclient.BaseAddress = new Uri(_connectionSettings.ApiAdress);
 
             _movements = new List<PolarisMovementResult>();
             _tlms = new List<PolarisTLMMessage>();
 
             _bulkSendTimer = new Timer(OnBulksendTimerElapsed);
-            _bulkSendTimer.Change(10000, Timeout.Infinite);
+            _bulkSendTimer.Change(_timerDueTime, Timeout.Infinite);
             InjectPolarisAuthentication();
         }
 
@@ -53,7 +59,7 @@ namespace Pollux.Domain.Connection
                 };
 
                 var movementjson = JsonConvert.SerializeObject(aggregatedMovement);
-                var movementresponse = await SendJsonToServer(movementjson, _settings.MovementEndpoint);
+                var movementresponse = await SendJsonToServer(movementjson, _connectionSettings.MovementEndpoint);
                 if (movementresponse != null && movementresponse.IsSuccessStatusCode)
                 {
                     _movements.Clear();
@@ -63,14 +69,14 @@ namespace Pollux.Domain.Connection
             if(_tlms != null && _tlms.Count > 0)
             {
                 var tlmjson = JsonConvert.SerializeObject(_tlms);
-                var tlmresponse = await SendJsonToServer(tlmjson, _settings.TlmEndpoint);
+                var tlmresponse = await SendJsonToServer(tlmjson, _connectionSettings.TlmEndpoint);
                 if (tlmresponse != null && tlmresponse.IsSuccessStatusCode)
                 {
                     _tlms.Clear();
                 }             
             }
 
-            _bulkSendTimer.Change(10000, Timeout.Infinite);
+            _bulkSendTimer.Change(_timerDueTime, Timeout.Infinite);
         }
 
         public void SubmitMovement(PolarisMovementResult mr)
@@ -88,7 +94,7 @@ namespace Pollux.Domain.Connection
             if (dir != null)
             {
                 var json = JsonConvert.SerializeObject(dir);
-                var response = await SendJsonToServer(json, _settings.DeviceInfoEndpoint);
+                var response = await SendJsonToServer(json, _connectionSettings.DeviceInfoEndpoint);
                 if (response != null)
                 {
                     return response.IsSuccessStatusCode;
@@ -102,7 +108,7 @@ namespace Pollux.Domain.Connection
             if (ping != null)
             {
                 var json = JsonConvert.SerializeObject(ping);
-                var response = await SendJsonToServer(json, _settings.PingEndpoint);
+                var response = await SendJsonToServer(json, _connectionSettings.PingEndpoint);
                 if (response != null)
                 {
                     return response.IsSuccessStatusCode;
@@ -132,7 +138,7 @@ namespace Pollux.Domain.Connection
 
         private async void InjectPolarisAuthentication()
         {
-            HttpResponseMessage response = await SendJsonToServer(JsonConvert.SerializeObject(_authentication), _settings.LoginEndpoint);
+            HttpResponseMessage response = await SendJsonToServer(JsonConvert.SerializeObject(_authentication), _connectionSettings.LoginEndpoint);
             if (response != null && response.IsSuccessStatusCode)
             {
                 using (var content = response.Content)

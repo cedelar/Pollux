@@ -37,14 +37,6 @@ namespace Pollux.Domain.Processing
             {
                 CommonWhiteListEnabled = false,
                 CommonWhitelist = new List<string>() { 
-                    //Testbeacons CD
-                    "F2:58:48:27:9C:56",
-                    "CA:F4:A4:77:77:26",
-                    //Beacons POC1
-                    "C3:7F:40:2B:BB:0F",
-                    "F5:74:01:91:37:EE",
-                    "ED:D3:E3:B4:03:32",
-                    //Beacons POC2
                     "EC:96:FB:22:B6:AF",
                     "E2:4F:27:0C:27:04",
                     "EC:1A:EB:33:66:06",
@@ -147,8 +139,8 @@ namespace Pollux.Domain.Processing
                     "D2:26:E4:EB:32:A8"
                 },
                 MovementDestinationCode = "Pollux",
-                MovementMinSendIntervalSec = 30,
-                TlmMinSendIntervalSec = 120,
+                MovementMinSendIntervalSec = 60,
+                TlmMinSendIntervalSec = 600,
                 PingMinSendIntervalSec = 60,
             };
         }
